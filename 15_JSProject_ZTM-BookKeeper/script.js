@@ -55,21 +55,6 @@ const urlIsValid = function (urlValue) {
 
 // Validate Form
 const validate = function (nameValue, urlValue) {
-  // const expression =
-  //   /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
-  // const regex = new RegExp(expression);
-
-  // if (!nameValue || !urlValue) {
-  //   alert('Please submit values for both fields');
-  //   return false;
-  // }
-
-  // if (!urlValue.match(regex)) {
-  //   alert('Please provide a valid web address');
-  //   return false;
-  // }
-
-  // Valid
   if (!nameAndUrlAreValid(nameValue, urlValue)) {
     showMessage('Please submit values for both fields');
   }
@@ -77,6 +62,25 @@ const validate = function (nameValue, urlValue) {
   if (!urlIsValid(urlValue)) showMessage('Please provide a valid web address');
 
   return nameAndUrlAreValid(nameValue, urlValue) && urlIsValid(urlValue);
+};
+
+// Fetch Bookmarks
+
+const fetchBookmarks = function () {
+  // Get bookmarks from localStorage if available
+  if (localStorage.getItem('bookmarks')) {
+    bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
+  } else {
+    // Create a bookmarks array in localStorage
+    bookmarks = [
+      {
+        name: 'Jacinto Design',
+        url: 'https://jacinto.desing',
+      },
+    ];
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  }
+  console.log(bookmarks);
 };
 
 // Handle Data from Form
@@ -96,10 +100,14 @@ const storeBookmark = function (e) {
   };
 
   bookmarks.push(bookmark);
-  console.log(bookmarks);
+  localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+  fetchBookmarks();
   bookmarkForm.reset();
   websiteNameEL.focus();
 };
 
 // Event Listener
 bookmarkForm.addEventListener('submit', storeBookmark);
+
+// On Load, Fetch Bookmarks
+fetchBookmarks();
