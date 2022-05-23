@@ -1,17 +1,5 @@
 'use strict';
 
-/*
-// Old Version
-if (!urlValue.includes('http://', 'https://')) {     
-    urlValue = `https://${urlValue}`; 
-} 
- 
-// New Version
-if (!urlValue.includes('https://') && !urlValue.includes('http://')) {
-     urlValue = `https://${urlValue}`; 
-}
-*/
-
 const modal = document.getElementById('modal');
 const modalShow = document.getElementById('show-modal');
 const modalClose = document.getElementById('close-modal');
@@ -64,8 +52,42 @@ const validate = function (nameValue, urlValue) {
   return nameAndUrlAreValid(nameValue, urlValue) && urlIsValid(urlValue);
 };
 
-// Fetch Bookmarks
+// Build Bookmarks DOM
+const buildBookmarks = function () {
+  // Build Items
+  bookmarks.forEach(bookmark => {
+    const { name, url } = bookmark;
+    const item = document.createElement('div');
+    console.log(name, url);
+    item.classList.add('item');
+    // Close Icon
+    const closeIcon = document.createElement('i');
+    closeIcon.classList.add('fas', 'fa-times');
+    closeIcon.setAttribute('title', 'Delete Bookmark');
+    closeIcon.setAttribute('onclick', `deleteBookmark('${url}')`);
+    // Favicon / Link Container
+    const linkInfo = document.createElement('div');
+    linkInfo.classList.add('name');
+    // Favicon
+    const favicon = document.createElement('img');
+    favicon.setAttribute(
+      'src',
+      `https://s2.googleusercontent.com/s2/favicons?domain=${url}`
+    );
+    favicon.setAttribute('alt', 'Favicon');
+    // Link
+    const link = document.createElement('a');
+    link.setAttribute('href', `${url}`);
+    link.setAttribute('target', '_blank');
+    link.textContent = name;
+    // Append to bookmarks Container
+    linkInfo.append(favicon, link);
+    item.append(closeIcon, linkInfo);
+    bookmarksContainer.appendChild(item);
+  });
+};
 
+// Fetch Bookmarks
 const fetchBookmarks = function () {
   // Get bookmarks from localStorage if available
   if (localStorage.getItem('bookmarks')) {
@@ -75,12 +97,12 @@ const fetchBookmarks = function () {
     bookmarks = [
       {
         name: 'Jacinto Design',
-        url: 'https://jacinto.desing',
+        url: 'https://jacinto.design',
       },
     ];
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
   }
-  console.log(bookmarks);
+  buildBookmarks();
 };
 
 // Handle Data from Form
